@@ -1,9 +1,8 @@
-package org.education.beerlovers.controllers;
+package org.education.beerlovers.authentication;
 
 import lombok.RequiredArgsConstructor;
-import org.education.beerlovers.config.JwtUtils;
-import org.education.beerlovers.dao.UserDao;
-import org.education.beerlovers.dto.AuthenticationRequest;
+import org.education.beerlovers.security.JwtUtils;
+import org.education.beerlovers.user.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +17,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
-    private final UserDao userDao;
+    private final UserService userService;
     private final JwtUtils jwtUtils;
 
     @CrossOrigin(origins="http://localhost:3000")
@@ -29,7 +28,8 @@ public class AuthenticationController {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
-        final UserDetails user = userDao.findUserByEmail(request.getEmail());
+        final UserDetails user = userService.loadUserByUsername(request.getEmail());
+        System.out.println(user);
         Map<String, Object> map = new HashMap<String, Object>();
         if(user != null) {
             map.put("accessToken", jwtUtils.generateToken(user));

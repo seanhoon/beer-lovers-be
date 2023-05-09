@@ -1,4 +1,4 @@
-package org.education.beerlovers.dto;
+package org.education.beerlovers.authentication;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class AuthenticationRequest {
-
     private String email;
     private String password;
 }

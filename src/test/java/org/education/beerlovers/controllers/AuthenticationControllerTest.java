@@ -1,8 +1,10 @@
 package org.education.beerlovers.controllers;
 
-import org.education.beerlovers.config.JwtUtils;
-import org.education.beerlovers.dao.UserDao;
-import org.education.beerlovers.dto.AuthenticationRequest;
+import org.education.beerlovers.authentication.AuthenticationController;
+import org.education.beerlovers.security.JwtUtils;
+import org.education.beerlovers.authentication.AuthenticationRequest;
+import org.education.beerlovers.user.UserRepository;
+import org.education.beerlovers.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -19,8 +22,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(AuthenticationController.class)
-@ContextConfiguration(classes= {UserDao.class})
+@ContextConfiguration(classes= {UserService.class})
 class AuthenticationControllerTest {
+
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    AuthenticationControllerTest(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     @Test
     void authenticate() {
@@ -34,12 +45,12 @@ class AuthenticationControllerTest {
                 return null;
             }
         };
-        UserDao userDao = new UserDao();
+        UserService userService = new UserService(userRepository, bCryptPasswordEncoder);
         JwtUtils jwtUtils = new JwtUtils();
 
         AuthenticationController controller = new AuthenticationController(
           authenticationManager,
-          userDao,
+          userService,
           jwtUtils
         );
 

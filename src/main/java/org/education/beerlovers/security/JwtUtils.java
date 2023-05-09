@@ -1,4 +1,4 @@
-package org.education.beerlovers.config;
+package org.education.beerlovers.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
