@@ -1,11 +1,17 @@
 package org.education.beerlovers.user;
 
 import lombok.AllArgsConstructor;
+import org.education.beerlovers.beer.Beer;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -34,5 +40,9 @@ public class UserService implements UserDetailsService {
     userRepository.save(user);
 
     return "user is registered";
+  }
+
+  public List<User> fetchUsers() {
+    return userRepository.fetchUsers();
   }
 }

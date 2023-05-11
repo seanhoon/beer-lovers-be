@@ -42,7 +42,7 @@ public class User implements UserDetails {
   @ElementCollection(targetClass = String.class)
   private List<Long> likedBy;
 
-  @ManyToMany
+  @ManyToMany(cascade = {CascadeType.ALL})
   @JoinTable(
     name = "user_beers",
     joinColumns = @JoinColumn(name = "userId"),
