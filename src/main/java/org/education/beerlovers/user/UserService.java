@@ -33,7 +33,6 @@ public class UserService implements UserDetailsService {
     user.setPassword(encodedPassword);
     userRepository.save(user);
 
-    // TODO: Sent confirmation token
     return "user is registered";
   }
 }

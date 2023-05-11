@@ -16,8 +16,10 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode
 public class User implements UserDetails {
+
   @Id
   @SequenceGenerator(
     name = "user_sequence",
