@@ -34,15 +34,15 @@ public class UserController {
   public ResponseEntity<Map<String, Object>> addBeer(@PathVariable Long userId, @RequestBody Beer beer) {
     Boolean isBeerAdded = userService.addBeerToUser(userId, beer);
 
-    User user = userRepository.findById(userId).get();
+    Set<Beer> beerList = userRepository.findById(userId).get().getBeers();
     Map<String, Object> map = new HashMap<String, Object>();
     if (!isBeerAdded) {
       map.put("error", "beer already exist in user's database");
-      map.put("user", user);
+      map.put("beers", beerList);
       return ResponseEntity.status(400).body(map);
     }
     map.put("msg", "beer has been added into user's list");
-    map.put("user", user);
+    map.put("beers", beerList);
     return ResponseEntity.status(200).body(map);
   }
 }

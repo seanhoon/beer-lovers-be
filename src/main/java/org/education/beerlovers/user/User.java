@@ -40,7 +40,6 @@ public class User implements UserDetails {
   @ElementCollection(targetClass = String.class)
   private List<Long> likedBy;
 
-//  @ManyToMany(cascade = {CascadeType.ALL})
   @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
   @JsonIgnore
   @JoinTable(
@@ -88,16 +87,4 @@ public class User implements UserDetails {
     SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name());
     return Collections.singletonList(authority);
   }
-
-//  public boolean equals(User other) {
-//    return userId.equals(other.userId);
-//  }
-
-//  @Override
-//  public int hashCode() {
-//    int result = getUserId().hashCode();
-//    result = 31 * result + getBeers().hashCode();
-//    result = 31 * result + getEmail().hashCode();
-//    return result;
-//  }
 }

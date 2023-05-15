@@ -56,15 +56,4 @@ public class Beer {
     this.price = price;
     this.score = score;
   }
-
-//  public boolean equals(Beer other) {
-//    return beerId.equals(other.beerId);
-//  }
-
-//  @Override
-//  public int hashCode() {
-//    int result = getBeerName().hashCode();
-//    result = 31 * result + getUsers().hashCode();
-//    return result;
-//  }
 }
