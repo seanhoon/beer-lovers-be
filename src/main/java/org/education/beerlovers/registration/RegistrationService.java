@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -25,7 +26,7 @@ public class RegistrationService {
       map.put("error", "username not valid");
       return ResponseEntity.status(400).body(map);
     }
-    List<Beer> beers = List.of();
+    Set<Beer> beers = Set.of();
     List<Long> likedBy = List.of();
     userService.signUpUser(
       new User(

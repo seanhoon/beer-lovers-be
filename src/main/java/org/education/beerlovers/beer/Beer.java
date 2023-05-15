@@ -1,11 +1,13 @@
 package org.education.beerlovers.beer;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.education.beerlovers.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "beers")
@@ -13,7 +15,6 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
 public class Beer {
   @Id
   @SequenceGenerator(
@@ -32,17 +33,18 @@ public class Beer {
   private Double price;
   @Column(name =  "score", nullable = false)
   private Double score;
-  @Column(name =  "first_brewed", nullable = true)
+  @Column(name =  "first_brewed")
   private LocalDate first_brewed;
-  @Column(name =  "description", nullable = true)
+  @Column(name =  "description")
   private String description;
-  @Column(name =  "image_url", nullable = true)
+  @Column(name =  "image_url")
   private String image_url;
 
   @ManyToMany(mappedBy = "beers")
-  private List<User> users;
+  @JsonIgnore
+  private Set<User> users;
 
-  public Beer(String beerName, Double price, Double score, List<User> users) {
+  public Beer(String beerName, Double price, Double score, Set<User> users) {
     this.beerName = beerName;
     this.price = price;
     this.score = score;
@@ -54,4 +56,15 @@ public class Beer {
     this.price = price;
     this.score = score;
   }
+
+//  public boolean equals(Beer other) {
+//    return beerId.equals(other.beerId);
+//  }
+
+//  @Override
+//  public int hashCode() {
+//    int result = getBeerName().hashCode();
+//    result = 31 * result + getUsers().hashCode();
+//    return result;
+//  }
 }

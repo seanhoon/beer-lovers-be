@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BeerService {
@@ -18,5 +19,9 @@ public class BeerService {
 
   public Beer addBeer(Beer beer) {
     return beerRepository.save(beer);
+  }
+
+  public Optional<Beer> findBeerByName(String beerName) {
+    return beerRepository.findBeerByName(beerName);
   }
 }

@@ -1,5 +1,6 @@
 package org.education.beerlovers.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.education.beerlovers.beer.Beer;
 import org.springframework.security.core.GrantedAuthority;
@@ -7,9 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -17,7 +16,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 public class User implements UserDetails {
 
   @Id
@@ -42,15 +40,17 @@ public class User implements UserDetails {
   @ElementCollection(targetClass = String.class)
   private List<Long> likedBy;
 
-  @ManyToMany(cascade = {CascadeType.ALL})
+//  @ManyToMany(cascade = {CascadeType.ALL})
+  @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+  @JsonIgnore
   @JoinTable(
     name = "user_beers",
     joinColumns = @JoinColumn(name = "userId"),
     inverseJoinColumns = @JoinColumn(name = "beerId")
   )
-  private List<Beer> beers;
+  private Set<Beer> beers = new HashSet<>();
 
-  public User(String email, String password, UserRole role, List<Long> likedBy, List<Beer> beers) {
+  public User(String email, String password, UserRole role, List<Long> likedBy, Set<Beer> beers) {
     this.email = email;
     this.password = password;
     this.role = role;
@@ -88,4 +88,16 @@ public class User implements UserDetails {
     SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name());
     return Collections.singletonList(authority);
   }
+
+//  public boolean equals(User other) {
+//    return userId.equals(other.userId);
+//  }
+
+//  @Override
+//  public int hashCode() {
+//    int result = getUserId().hashCode();
+//    result = 31 * result + getBeers().hashCode();
+//    result = 31 * result + getEmail().hashCode();
+//    return result;
+//  }
 }
