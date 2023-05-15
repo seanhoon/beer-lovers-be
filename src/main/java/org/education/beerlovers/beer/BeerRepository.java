@@ -11,5 +11,4 @@ public interface BeerRepository extends JpaRepository<Beer, Long> {
 
   @Query(value = "SELECT * FROM beers WHERE beer_name = ?1", nativeQuery = true)
   Optional<Beer> findBeerByName(String beerName);
-
 }

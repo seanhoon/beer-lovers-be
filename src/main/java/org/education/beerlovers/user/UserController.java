@@ -45,4 +45,20 @@ public class UserController {
     map.put("beers", beerList);
     return ResponseEntity.status(200).body(map);
   }
+
+  @PutMapping("/{userId}/updateBeer")
+  public ResponseEntity<Map<String, Object>> updateUserBeer(@PathVariable Long userId, @RequestBody Beer beer) {
+    Boolean isBeerUpdated = userService.updateUserBeer(userId, beer);
+
+    Set<Beer> beerList = userRepository.findById(userId).get().getBeers();
+    Map<String, Object> map = new HashMap<String, Object>();
+    if (!isBeerUpdated) {
+      map.put("error", "beer does not exist in user's database");
+      map.put("beers", beerList);
+      return ResponseEntity.status(400).body(map);
+    }
+    map.put("msg", "beer has been updated");
+    map.put("beers", beerList);
+    return ResponseEntity.status(200).body(map);
+  }
 }

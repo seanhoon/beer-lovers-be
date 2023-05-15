@@ -77,4 +77,27 @@ public class UserService implements UserDetailsService {
     userRepository.save(user);
     return true;
   }
+
+  public Boolean updateUserBeer(Long userId, Beer updatedBeer) {
+    Boolean beerAlreadyExistForUser = doesBeerExistForUser(userId, updatedBeer.getBeerName());
+    if (!beerAlreadyExistForUser) {
+      return false;
+    }
+    User user = userRepository.findById(userId).get();
+    Set<Beer> beerList = user.getBeers();
+    Set<Beer> updatedUserBeers = beerList
+      .stream()
+      .map(beer -> {
+        if (beer.getBeerName().equalsIgnoreCase(updatedBeer.getBeerName())) {
+          beer = updatedBeer;
+        }
+        return beer;
+      }).collect(Collectors.toSet());
+    user.setBeers(updatedUserBeers);
+    userRepository.save(user);
+    return true;
+
+    // issue 1: this adds a new instance of a beer to the beer table. it doesn't update the row instead.
+    // issue 2: user_beers table's original beer id has been updated, instead of just its name/price/etc
+  }
 }
