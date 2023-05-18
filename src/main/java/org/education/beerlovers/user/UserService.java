@@ -42,8 +42,8 @@ public class UserService implements UserDetailsService {
     return "user is registered";
   }
 
-  public List<User> fetchUsers() {
-    return userRepository.fetchUsers();
+  public List<User> fetchFriends(Long userId) {
+    return userRepository.fetchFriends(userId);
   }
 
   public Boolean doesBeerExistForUser(Long userId, String beerName) {

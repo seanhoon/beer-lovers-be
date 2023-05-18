@@ -14,6 +14,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findByEmail(String email);
 
-  @Query(value = "SELECT * FROM users", nativeQuery = true)
-  List<User> fetchUsers();
+  @Query(value = "SELECT * FROM users WHERE users.user_id != ?1", nativeQuery = true)
+  List<User> fetchFriends(Long userId);
 }

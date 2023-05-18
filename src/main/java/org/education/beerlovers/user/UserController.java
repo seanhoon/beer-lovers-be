@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -22,11 +23,20 @@ public class UserController {
     this.userRepository = userRepository;
   }
 
-  @GetMapping("/allUsers")
-  public ResponseEntity<Map<String, Object>> fetchUser() {
-    final List<User> users = userService.fetchUsers();
+  @GetMapping("/{userId}/allFriends")
+  public ResponseEntity<Map<String, Object>> fetchUser(@PathVariable Long userId) {
+    final List<User> users = userService.fetchFriends(userId);
+    final List<Map<String, Object>> updatedUsers = users.stream()
+      .map(user ->  {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("id", user.getUserId());
+        map.put("name", user.getUsername());
+        map.put("beers", user.getBeers());
+        return map;
+      }).collect(Collectors.toList());
+
     Map<String, Object> map = new HashMap<String, Object>();
-    map.put("users", users);
+    map.put("users", updatedUsers);
     return ResponseEntity.status(200).body(map);
   }
 
