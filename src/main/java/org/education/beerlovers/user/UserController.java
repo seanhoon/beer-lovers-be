@@ -24,7 +24,7 @@ public class UserController {
   }
 
   @GetMapping("/{userId}/allFriends")
-  public ResponseEntity<Map<String, Object>> fetchUser(@PathVariable Long userId) {
+  public ResponseEntity<Map<String, Object>> fetchFriends(@PathVariable Long userId) {
     final List<User> users = userService.fetchFriends(userId);
     final List<Map<String, Object>> updatedUsers = users.stream()
       .map(user ->  {
@@ -38,6 +38,18 @@ public class UserController {
     Map<String, Object> map = new HashMap<String, Object>();
     map.put("users", updatedUsers);
     return ResponseEntity.status(200).body(map);
+  }
+
+  @GetMapping("/{userId}/getBeers")
+  public ResponseEntity<Map<String, Object>> fetchBeers(@PathVariable Long userId) {
+    final Optional<User> user = userRepository.findById(userId);
+    Map<String, Object> map = new HashMap<String, Object>();
+    if (user.isPresent()) {
+      map.put("beers", user.get().getBeers());
+      return ResponseEntity.status(200).body(map);
+    }
+    map.put("error", "user does not exist");
+    return ResponseEntity.status(400).body(map);
   }
 
   @PostMapping("/{userId}/addBeer")
