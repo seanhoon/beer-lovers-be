@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
     return userRepository.fetchFriends(userId);
   }
 
-  public Boolean doesBeerExistForUser(Long userId, String beerName) {
+  private Boolean doesBeerExistForUser(Long userId, String beerName) {
     User user = userRepository.findById(userId).get();
 
     Optional<Beer> beer = beerRepository.findBeerByName(beerName);
@@ -65,8 +65,26 @@ public class UserService implements UserDetailsService {
       return false;
   }
 
+  private Boolean doesBeerIdExistForUser(Long userId, Long beerId) {
+    User user = userRepository.findById(userId).get();
+
+    Optional<Beer> beer = beerRepository.findById(beerId);
+    if (beer.isPresent()) {
+      Set<Beer> filteredBeerList = user.getBeers()
+        .stream()
+        .filter(currBeer -> currBeer.getBeerId() == beerId)
+        .collect(Collectors.toSet());
+      if (filteredBeerList.size() > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
+  }
+
   public Boolean addBeerToUser(Long userId, Beer beer) {
-    Boolean beerAlreadyExistForUser = doesBeerExistForUser(userId, beer.getBeerName());
+    Boolean beerAlreadyExistForUser = doesBeerExistForUser(userId, beer.getName());
     if (beerAlreadyExistForUser) {
       return false;
     }
@@ -79,7 +97,7 @@ public class UserService implements UserDetailsService {
   }
 
   public Boolean updateUserBeer(Long userId, Beer updatedBeer) {
-    Boolean beerAlreadyExistForUser = doesBeerExistForUser(userId, updatedBeer.getBeerName());
+    Boolean beerAlreadyExistForUser = doesBeerExistForUser(userId, updatedBeer.getName());
     if (!beerAlreadyExistForUser) {
       return false;
     }
@@ -88,7 +106,7 @@ public class UserService implements UserDetailsService {
     Set<Beer> updatedUserBeers = beerList
       .stream()
       .map(beer -> {
-        if (beer.getBeerName().equalsIgnoreCase(updatedBeer.getBeerName())) {
+        if (beer.getName().equalsIgnoreCase(updatedBeer.getName())) {
           beer = updatedBeer;
         }
         return beer;
@@ -99,5 +117,38 @@ public class UserService implements UserDetailsService {
 
     // issue 1: this adds a new instance of a beer to the beer table. it doesn't update the row instead.
     // issue 2: user_beers table's original beer id has been updated, instead of just its name/price/etc
+  }
+
+  public Boolean deleteUserBeer(Long userId, Long beerId) {
+    Boolean beerDoesNotExistForUser = doesBeerIdExistForUser(userId, beerId);
+    if (!beerDoesNotExistForUser) {
+      return false;
+    }
+    User user = userRepository.findById(userId).get();
+    Optional<Beer> beer = beerRepository.findById(beerId);
+    Set<Beer> userBeersToUpdate = user.getBeers();
+    userBeersToUpdate.remove(beer);
+    user.setBeers(userBeersToUpdate);
+    userRepository.save(user);
+    return true;
+  }
+
+  public Boolean likeFriendBeers(Long userId, Long friendId) {
+    Boolean likeStatus;
+    User friend = userRepository.findById(friendId).get();
+    List<Long> likedByList = friend.getLikedBy();
+
+    if (likedByList.contains(userId)) {
+      likedByList = likedByList.stream()
+        .filter(personId -> !personId.equals(userId))
+        .collect(Collectors.toList());
+      likeStatus = false;
+    } else {
+      likedByList.add(userId);
+      likeStatus = true;
+    }
+    friend.setLikedBy(likedByList);
+    userRepository.save(friend);
+    return likeStatus;
   }
 }

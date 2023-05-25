@@ -37,7 +37,7 @@ public class User implements UserDetails {
   @Enumerated(EnumType.STRING)
   private UserRole role;
   @Column(name = "likedBy")
-  @ElementCollection(targetClass = String.class)
+  @ElementCollection(targetClass = Long.class)
   private List<Long> likedBy;
 
   @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
